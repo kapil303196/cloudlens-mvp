@@ -186,7 +186,7 @@ function getSeverityColor(severity: string): string {
 function PageFooter({ pageNum }: { pageNum: number }) {
   return (
     <View style={styles.pageFooter} fixed>
-      <Text style={styles.footerText}>CloudSave AI — LogicSpark Technology LLP</Text>
+      <Text style={styles.footerText}>CloudSave AI — Prod Bois</Text>
       <Text style={styles.footerText}>Page {pageNum}</Text>
     </View>
   );
@@ -217,7 +217,7 @@ function CoverPage({ data }: { data: PDFReportData }) {
       <Text style={styles.coverMeta}>Issues Found: {report.issues.length}</Text>
 
       <View style={styles.coverDivider} />
-      <Text style={styles.coverFooter}>Powered by LogicSpark Technology LLP · CloudSave AI v{data.version}</Text>
+      <Text style={styles.coverFooter}>Powered by Prod Bois · CloudSave AI v{data.version}</Text>
       <Text style={[styles.coverFooter, { marginTop: 4 }]}>
         Estimates based on static analysis. Actual savings may vary.
       </Text>
@@ -483,7 +483,7 @@ function DisclaimerPage({ data }: { data: PDFReportData }) {
 
       <View style={{ borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 8, padding: 20 }}>
         <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', color: '#1E293B', marginBottom: 8 }}>
-          CloudSave AI by LogicSpark Technology LLP
+          CloudSave AI by Prod Bois
         </Text>
         <Text style={{ fontSize: 9, color: '#64748B', lineHeight: 1.6 }}>
           This report was generated automatically by CloudSave AI using static infrastructure analysis. No real AWS API calls were made. All pricing is based on publicly available AWS pricing data.
@@ -509,7 +509,7 @@ export function ReportPDF({ data }: ReportPDFProps) {
   return (
     <Document
       title={`CloudSave AI Report — ${data.report.inputFileName}`}
-      author="CloudSave AI by LogicSpark Technology LLP"
+      author="CloudSave AI by Prod Bois"
       subject="AWS Infrastructure Cost Optimization Report"
       creator="CloudSave AI v1.0"
     >

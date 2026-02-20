@@ -13,6 +13,7 @@ import { calculateCostSummary } from '../../../lib/engine/cost-calculator';
 import { explainAllIssues, parseArchitectureImage } from '../../../lib/ai/claude';
 import { generateReportId } from '../../../lib/utils/format';
 import { APP_CONFIG } from '../../../lib/utils/constants';
+import { sanityClient } from '../../../lib/sanity/client';
 
 export const maxDuration = 60; // 60 second timeout for Vercel
 
@@ -124,11 +125,23 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/** Non-blocking Sanity save helper */
+/** Non-blocking Sanity save helper — calls Sanity directly instead of routing through HTTP */
 async function saveToSanity(report: AnalysisReport): Promise<void> {
-  await fetch('/api/sanity', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ report }),
-  });
+  const doc = {
+    _type: 'analysisReport',
+    reportId: report.id,
+    inputFileName: report.inputFileName,
+    inputFileType: report.inputFileType,
+    infraSummary: JSON.stringify(report.infra),
+    detectedServices: report.detectedServices,
+    issuesDetected: JSON.stringify(report.issues),
+    totalCurrentCost: report.costSummary.totalCurrentCost,
+    totalOptimizedCost: report.costSummary.totalOptimizedCost,
+    totalSavings: report.costSummary.totalMonthlySaving,
+    savingPercent: report.costSummary.savingPercent,
+    aiExplanations: JSON.stringify(report.aiExplanations),
+    createdAt: report.createdAt,
+  };
+
+  await sanityClient.create(doc);
 }

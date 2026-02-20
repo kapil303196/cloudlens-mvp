@@ -45,7 +45,7 @@
       "name": "sidecar-proxy",
       "image": "envoyproxy/envoy:latest",
       "cpu": 2048,
-      "memory": 4096,
+      "memory": 2048,
       "essential": false,
       "portMappings": [
         {
@@ -59,7 +59,7 @@
       "name": "metrics-collector",
       "image": "prom/prometheus:latest",
       "cpu": 2048,
-      "memory": 4096,
+      "memory": 2048,
       "essential": false,
       "portMappings": [
         {

@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Bot, Shield, AlertTriangle, Eye } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bot, Shield, AlertTriangle, Eye, Terminal, RotateCcw, Clock, Zap } from 'lucide-react';
 import type { AIExplanation as AIExplanationType, DetectedIssue } from '../../lib/types';
 
 interface AIExplanationProps {
@@ -63,18 +63,43 @@ function ExplanationItem({ issue, explanation }: ExplanationItemProps) {
         <div className="border-t border-white/10 px-4 py-4 space-y-4">
           {explanation ? (
             <>
-              {/* Explanation */}
+              {/* Effort + Risk badges */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium border sm:hidden ${risk.color} ${risk.bg} ${risk.border}`}>
+                  <RiskIcon size={11} />
+                  {risk.label}
+                </span>
+                {explanation.estimatedEffort && (
+                  <span className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium border text-sky-400 bg-sky-500/10 border-sky-500/20">
+                    <Clock size={11} />
+                    {explanation.estimatedEffort}
+                  </span>
+                )}
+              </div>
+
+              {/* Root Cause Analysis */}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-violet-400 mb-2">
-                  AI Analysis
+                  Root Cause Analysis
                 </p>
                 <p className="text-sm text-slate-300 leading-relaxed">{explanation.explanation}</p>
               </div>
 
+              {/* Impact Analysis */}
+              {explanation.impactAnalysis && (
+                <div className="rounded-lg bg-amber-500/5 border border-amber-500/15 px-3 py-2.5">
+                  <p className="text-xs font-semibold text-amber-400 mb-1 flex items-center gap-1.5">
+                    <Zap size={11} />
+                    Blast Radius
+                  </p>
+                  <p className="text-xs text-slate-400 leading-relaxed">{explanation.impactAnalysis}</p>
+                </div>
+              )}
+
               {/* When to Apply */}
               <div className="rounded-lg bg-white/5 border border-white/10 px-3 py-2.5">
                 <p className="text-xs font-semibold text-slate-400 mb-1">When to Apply</p>
-                <p className="text-xs text-slate-400">{explanation.whenToApply}</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{explanation.whenToApply}</p>
               </div>
 
               {/* Prerequisites */}
@@ -83,14 +108,60 @@ function ExplanationItem({ issue, explanation }: ExplanationItemProps) {
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
                     Prerequisites
                   </p>
-                  <ul className="space-y-1">
+                  <ol className="space-y-1.5">
                     {explanation.prerequisites.map((prereq, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-slate-400">
-                        <span className="text-violet-500 mt-0.5 shrink-0">→</span>
+                        <span className="text-violet-500 mt-0.5 shrink-0 font-mono text-[10px] w-4 text-right">{i + 1}.</span>
                         {prereq}
                       </li>
                     ))}
-                  </ul>
+                  </ol>
+                </div>
+              )}
+
+              {/* Implementation Steps */}
+              {explanation.implementationSteps && explanation.implementationSteps.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-1.5">
+                    <Terminal size={11} />
+                    Implementation Steps
+                  </p>
+                  <ol className="space-y-1.5">
+                    {explanation.implementationSteps.map((step, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                        <span className="text-emerald-500 mt-0.5 shrink-0 font-mono text-[10px] w-4 text-right">{i + 1}.</span>
+                        <span className="leading-relaxed">{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
+              {/* Rollback Plan */}
+              {explanation.rollbackPlan && (
+                <div className="rounded-lg bg-red-500/5 border border-red-500/15 px-3 py-2.5">
+                  <p className="text-xs font-semibold text-red-400 mb-1 flex items-center gap-1.5">
+                    <RotateCcw size={11} />
+                    Rollback Plan
+                  </p>
+                  <p className="text-xs text-slate-400 leading-relaxed">{explanation.rollbackPlan}</p>
+                </div>
+              )}
+
+              {/* AWS CLI Commands */}
+              {explanation.awsCLICommands && explanation.awsCLICommands.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-orange-400 mb-2 flex items-center gap-1.5">
+                    <Terminal size={11} />
+                    AWS CLI Commands
+                  </p>
+                  <div className="space-y-1.5">
+                    {explanation.awsCLICommands.map((cmd, i) => (
+                      <pre key={i} className="text-[11px] text-orange-300/80 bg-black/30 rounded-md px-3 py-1.5 overflow-x-auto font-mono border border-white/5">
+                        {cmd}
+                      </pre>
+                    ))}
+                  </div>
                 </div>
               )}
             </>

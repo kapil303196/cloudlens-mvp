@@ -137,7 +137,7 @@ export function DropZone({ onFilesSelected, disabled = false }: DropZoneProps) {
             { label: 'Terraform (.tf)', icon: FILE_TYPE_ICONS.terraform },
             { label: 'CloudFormation (.yaml)', icon: FILE_TYPE_ICONS.cloudformation },
             { label: 'ECS Task (.json)', icon: FILE_TYPE_ICONS.ecs },
-            { label: 'ZIP Archive', icon: FILE_TYPE_ICONS.zip },
+            // { label: 'ZIP Archive', icon: FILE_TYPE_ICONS.zip },
             { label: 'Architecture Image', icon: FILE_TYPE_ICONS.image },
           ].map(({ label, icon }) => (
             <span

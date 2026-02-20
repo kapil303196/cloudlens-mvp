@@ -1,6 +1,6 @@
 # CloudSave AI — AWS Infrastructure Cost Optimizer
 
-**Built by LogicSpark Technology LLP**
+**Built by Prod Bois**
 
 CloudSave AI is a production-quality, AI-powered AWS infrastructure cost analyzer. Upload your CDK, Terraform, CloudFormation, or ECS task definition files and get instant, specific savings recommendations — no AWS credentials required.
 
@@ -216,4 +216,4 @@ The `next.config.js` is pre-configured for Vercel with:
 
 ## License
 
-MIT — Built with ❤️ by LogicSpark Technology LLP
+MIT — Built with ❤️ by Prod Bois

@@ -16,7 +16,7 @@ export function Footer() {
             Estimates based on static analysis. Actual savings may vary. Review with your team.
           </p>
           <p className="text-xs text-slate-600">
-            © 2026 LogicSpark Technology LLP
+            © 2026 Prod Bois
           </p>
         </div>
       </div>

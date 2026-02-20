@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     'AI-powered AWS infrastructure cost analysis. Upload your CDK, Terraform, or CloudFormation files and get instant cost savings recommendations.',
   keywords: 'AWS, cost optimization, CDK, Terraform, CloudFormation, cloud savings',
-  authors: [{ name: 'LogicSpark Technology LLP' }],
+  authors: [{ name: 'Prod Bois' }],
   openGraph: {
     title: 'CloudSave AI — AWS Cost Optimizer',
     description: 'Identify AWS cost savings in minutes with AI-powered static analysis.',

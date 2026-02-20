@@ -115,7 +115,7 @@ export const APP_CONFIG = {
   maxFilesInZip: 50,
   maxConcurrentAIRequests: 5,
   appName: 'CloudSave AI',
-  companyName: 'LogicSpark Technology LLP',
+  companyName: 'Prod Bois',
   version: '1.0.0',
   confettiThreshold: 500, // Show confetti when savings > $500/mo
 } as const;

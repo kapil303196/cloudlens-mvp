@@ -20,13 +20,13 @@ export class LogicSparkAppStack extends cdk.Stack {
 
     // ==========================================
     // RULE 1: Lambda Overprovisioned Memory
-    // 4096MB when 1024MB would suffice
+    // 2048MB when 1024MB would suffice
     // ==========================================
     const processOrdersFunction = new lambda.Function(this, 'processOrdersFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset('src/functions/process-orders'),
-      memorySize: 4096,          // ⚠️ ANTI-PATTERN: 4x more than needed
+      memorySize: 2048,          // ⚠️ ANTI-PATTERN: 4x more than needed
       timeout: cdk.Duration.seconds(900), // ⚠️ ANTI-PATTERN: Max timeout (Rule 2)
       architecture: lambda.Architecture.X86_64,
     });
@@ -67,7 +67,7 @@ export class LogicSparkAppStack extends cdk.Stack {
     const cluster = new ecs.Cluster(this, 'DevCluster', { vpc });
 
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'AppTaskDef', {
-      cpu: 4096,                  // ⚠️ ANTI-PATTERN: 4 vCPU (Rule 6)
+      cpu: 2048,                  // ⚠️ ANTI-PATTERN: 4 vCPU (Rule 6)
       memoryLimitMiB: 16384,     // ⚠️ ANTI-PATTERN: 16GB RAM (Rule 6)
     });
 

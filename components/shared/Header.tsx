@@ -30,7 +30,7 @@ export function Header({ isDark = true, onToggleTheme }: HeaderProps) {
             Claude AI
           </span>
           <span className="text-slate-600">·</span>
-          <span className="text-slate-500 text-xs">LogicSpark Technology LLP</span>
+          <span className="text-slate-500 text-xs">Prod Bois</span>
         </nav>
 
         <div className="flex items-center gap-2">

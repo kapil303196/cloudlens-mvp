@@ -164,10 +164,15 @@ export interface CostSummary {
 /** Claude-generated explanation for a detected issue */
 export interface AIExplanation {
   issueId: string;
-  explanation: string; // Claude-generated
+  explanation: string;
   riskLevel: string; // 'safe' | 'moderate' | 'needs-review'
   whenToApply: string;
   prerequisites: string[];
+  implementationSteps: string[];
+  rollbackPlan: string;
+  impactAnalysis: string;
+  estimatedEffort: string;
+  awsCLICommands: string[];
 }
 
 // ===== REPORT TYPES =====

@@ -256,7 +256,7 @@ const ecsFargateWaste: DetectionRule = {
   check(infra: NormalizedInfra): DetectedIssue[] {
     const issues: DetectedIssue[] = [];
     for (const svc of infra.ecs?.services ?? []) {
-      if (svc.launchType === 'FARGATE' && svc.cpu >= 4096 && svc.memory >= 8192) {
+      if (svc.launchType === 'FARGATE' && svc.cpu >= 2048 && svc.memory >= 8192) {
         const vcpu = svc.cpu / 1024;
         const memGB = svc.memory / 1024;
         const hourly =
@@ -277,7 +277,7 @@ const ecsFargateWaste: DetectionRule = {
           description: `Service "${svc.name}" allocates ${svc.cpu} CPU units (${vcpu} vCPU) and ${svc.memory}MB. Based on typical application patterns, this is over-provisioned. Right-sizing to 2 vCPU / 4GB reduces cost significantly.`,
           severity: 'medium',
           currentConfig: `${svc.cpu} CPU units, ${svc.memory}MB memory`,
-          recommendedConfig: '2048 CPU units (2 vCPU), 4096MB — measure then adjust',
+          recommendedConfig: '2048 CPU units (2 vCPU), 2048MB — measure then adjust',
           currentCost: Math.round(currentCost),
           optimizedCost: Math.round(optimizedCost),
           saving: Math.round(currentCost - optimizedCost),
