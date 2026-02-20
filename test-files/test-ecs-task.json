@@ -1,0 +1,79 @@
+{
+  "family": "logicspark-api-task",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:123456789012:task-definition/logicspark-api-task:1",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "16384",
+  "memory": "32768",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "api-server",
+      "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/logicspark-api:latest",
+      "cpu": 8192,
+      "memory": 16384,
+      "memoryReservation": 8192,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "3000" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/logicspark-api",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3
+      }
+    },
+    {
+      "name": "sidecar-proxy",
+      "image": "envoyproxy/envoy:latest",
+      "cpu": 2048,
+      "memory": 4096,
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "metrics-collector",
+      "image": "prom/prometheus:latest",
+      "cpu": 2048,
+      "memory": 4096,
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 9090,
+          "hostPort": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    { "key": "Project", "value": "LogicSpark" },
+    { "key": "Environment", "value": "production" }
+  ],
+  "registeredAt": "2024-01-15T10:30:00.000Z",
+  "registeredBy": "arn:aws:iam::123456789012:user/devops-engineer"
+}

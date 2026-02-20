@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  CloudSave AI — Mock CloudFormation Test Template
+  Contains anti-patterns: EC2 previous gen, CloudFront PriceClass_All, API Gateway REST, S3 no tiering
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+
+Resources:
+
+  # ==========================================
+  # RULE 15: EC2 Previous Generation Instance
+  # m4.xlarge should be m5.xlarge
+  # ==========================================
+  AppServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: m4.xlarge    # ⚠️ ANTI-PATTERN: Previous gen (Rule 15)
+      ImageId: ami-0c55b159cbfafe1f0
+      Tags:
+        - Key: Name
+          Value: app-server-dev
+        - Key: Environment
+          Value: dev
+
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: c3.2xlarge   # ⚠️ ANTI-PATTERN: Previous gen (Rule 15)
+      ImageId: ami-0c55b159cbfafe1f0
+      Tags:
+        - Key: Name
+          Value: web-server-dev
+
+  # ==========================================
+  # RULE 14: CloudFront PriceClass_All
+  # ==========================================
+  WebDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        PriceClass: PriceClass_All  # ⚠️ ANTI-PATTERN: Most expensive (Rule 14)
+        DefaultCacheBehavior:
+          ViewerProtocolPolicy: redirect-to-https
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: S3Origin
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt StaticAssetsBucket.DomainName
+            S3OriginConfig: {}
+        DefaultRootObject: index.html
+
+  # ==========================================
+  # RULE 8: API Gateway REST API
+  # Should be HTTP API for cost savings
+  # ==========================================
+  DevRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: dev-rest-api            # ⚠️ ANTI-PATTERN: REST when HTTP suffices (Rule 8)
+      Description: Dev REST API
+      EndpointConfiguration:
+        Types: [REGIONAL]
+
+  # ==========================================
+  # RULE 9 + 10: S3 No Lifecycle / No IT
+  # ==========================================
+  StaticAssetsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: logicspark-cfn-static-assets
+      # ⚠️ ANTI-PATTERN: No LifecycleConfiguration (Rule 9)
+      # ⚠️ ANTI-PATTERN: No IntelligentTieringConfiguration (Rule 10)
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  DataLakeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: logicspark-cfn-data-lake
+      # ⚠️ ANTI-PATTERN: No lifecycle for data lake (Rule 9)
+      Tags:
+        - Key: Environment
+          Value: dev
+
+  # ==========================================
+  # RULE 3: RDS MultiAZ in Dev
+  # ==========================================
+  DevDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: cfn-dev-database
+      DBInstanceClass: db.r5.large   # ⚠️ ANTI-PATTERN: Oversized for dev
+      Engine: MySQL
+      EngineVersion: '8.0.35'
+      AllocatedStorage: '100'
+      MultiAZ: true                   # ⚠️ ANTI-PATTERN: MultiAZ in dev (Rule 3)
+      DBName: devdb
+      MasterUsername: admin
+      MasterUserPassword: '{{resolve:ssm:/dev/db/password}}'
+
+  # ==========================================
+  # Supporting Resources
+  # ==========================================
+  DevApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: DevRestApi
+    Properties:
+      RestApiId: !Ref DevRestApi
+      StageName: dev
+
+  NatGateway1:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt EIP1.AllocationId
+      SubnetId: subnet-12345678
+
+  NatGateway2:
+    Type: AWS::EC2::NatGateway    # ⚠️ ANTI-PATTERN: 2 NAT Gateways in dev (Rule 11)
+    Properties:
+      AllocationId: !GetAtt EIP2.AllocationId
+      SubnetId: subnet-87654321
+
+  EIP1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  EIP2:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+Outputs:
+  ApiUrl:
+    Value: !Sub 'https://${DevRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev'
+    Description: API Gateway URL
+
+  CloudFrontDomain:
+    Value: !GetAtt WebDistribution.DomainName
+    Description: CloudFront Distribution Domain
